@@ -11,7 +11,9 @@ internal fun parseSdk(sdkPath: String, action: (String) -> List<StyleToDomain>):
     if (file.isDirectory) {
       list.addAll(parseSdk(file.absolutePath, action))
     } else if (file.extension == "xml" && FileUtils.readFileToString(file, "UTF-8").contains("<style")) {
-      list.addAll(action(file.absolutePath).map { it.toDomain() })
+      val fileName = file.nameWithoutExtension
+      val directory = file.parentFile.name
+      list.addAll(action(file.absolutePath).map { it.toDomain(directory, fileName) })
     }
   }
 

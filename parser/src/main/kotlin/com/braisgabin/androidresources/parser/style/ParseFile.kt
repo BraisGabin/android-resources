@@ -58,7 +58,7 @@ internal fun parseFile(path: String): List<StyleToDomain> {
 }
 
 internal interface StyleToDomain {
-  fun toDomain(): Style
+  fun toDomain(directory: String, fileName: String): Style
 }
 
 private data class StyleMapper(
@@ -67,8 +67,8 @@ private data class StyleMapper(
     val values: MutableList<Row> = mutableListOf()
 ) : StyleToDomain {
 
-  override fun toDomain(): Style {
-    return Style(name, parent, values.map { it.toDomain() })
+  override fun toDomain(directory: String, fileName: String): Style {
+    return Style(name, directory, fileName, parent, values.map { it.toDomain() })
   }
 }
 

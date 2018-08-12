@@ -3,6 +3,7 @@ package com.braisgabin.androidresources.parser.style
 import com.nhaarman.mockitokotlin2.*
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.containsInAnyOrder
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 
@@ -12,8 +13,8 @@ class ParseSdkTest {
 
   private val action: (String) -> List<StyleToDomain> = mock {
     on { invoke(any()) } doReturn listOf(object : StyleToDomain {
-      override fun toDomain(): Style {
-        return (Style("foo"))
+      override fun toDomain(directory: String, fileName: String): Style {
+        return (Style("foo", directory, fileName))
       }
     })
   }
@@ -26,10 +27,10 @@ class ParseSdkTest {
   @Test
   internal fun `parse directory`() {
     val sdkPath = loader.getResource("sdk/").path
-    assertThat(parseSdk(sdkPath, action), `is`(listOf(
-        Style("foo"),
-        Style("foo"),
-        Style("foo"))))
+    assertThat(parseSdk(sdkPath, action), containsInAnyOrder(
+        Style("foo", "values", "styles"),
+        Style("foo", "values", "themes"),
+        Style("foo", "values-es", "styles")))
 
     verify(action).invoke("${sdkPath}values/styles.xml")
     verify(action).invoke("${sdkPath}values/themes.xml")
